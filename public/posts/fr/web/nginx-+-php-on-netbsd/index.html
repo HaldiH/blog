@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="HandheldFriendly" content="True" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta name="generator" content="Hugo 0.76.2" />
+
+
+<link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/amzrk2/cdn-stcapi@1/favicons/favicon.ico" />
+
+
+<title>Nginx &#43; PHP sur NetBSD - Hugo Haldi (ShinoYasx)&#39;s blog</title>
+
+
+
+<meta name="description" content="Installation de Nginx et PHP sur NetBSD" />
+
+
+<meta name="keywords" content="SysAdmin, web" />
+
+<meta property="og:title" content="Nginx &#43; PHP sur NetBSD" />
+<meta property="og:description" content="Installation de Nginx et PHP sur NetBSD" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://shinoyasx.github.io/posts/fr/web/nginx-&#43;-php-on-netbsd/" />
+<meta property="article:published_time" content="2020-10-09T02:47:02+02:00" />
+<meta property="article:modified_time" content="2020-10-09T02:47:02+02:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Nginx &#43; PHP sur NetBSD"/>
+<meta name="twitter:description" content="Installation de Nginx et PHP sur NetBSD"/>
+
+
+
+<style>
+    @media (prefers-color-scheme: dark) {
+        body[data-theme='auto'] img {
+            filter: brightness(60%);
+        }
+    }
+
+    body[data-theme='dark'] img {
+        filter: brightness(60%);
+    }
+</style>
+
+
+
+<link rel="stylesheet" href="https://shinoyasx.github.io/assets/css/fuji.min.css" />
+
+
+
+
+
+</head>
+
+<body data-theme="auto">
+    <script data-cfasync="false">
+  
+  var fujiThemeData = localStorage.getItem('fuji_data-theme');
+  
+  if (!fujiThemeData) {
+    localStorage.setItem('fuji_data-theme', 'auto');
+  } else {
+    
+    if (fujiThemeData !== 'auto') {
+      document.body.setAttribute('data-theme', fujiThemeData === 'dark' ? 'dark' : 'light');
+    }
+  }
+</script>
+
+    <header>
+    <div class="container-lg clearfix">
+        <div class="col-12 header">
+            <a class="title-main" href="https://shinoyasx.github.io/">Hugo Haldi (ShinoYasx)&#39;s blog</a>
+            
+            <span class="title-sub">DevOps, SysAdmin, GNU, Linux, Unix, etc.</span>
+            
+        </div>
+    </div>
+</header>
+
+    <main>
+        <div class="container-lg clearfix">
+            
+            <div class="col-12 col-md-9 float-left content">
+                
+<article>
+    
+    <h2 class="post-item post-title">
+        <a href="https://shinoyasx.github.io/posts/fr/web/nginx-&#43;-php-on-netbsd/">Nginx &#43; PHP sur NetBSD</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2020-10-09</span><span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;894 words</span><span><i class="iconfont icon-time-sharp"></i>&nbsp;5 minutes</span><span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/sysadmin">SysAdmin</a>&nbsp;<a href="/tags/web">web</a>&nbsp;</span>
+
+    </div>
+    
+    
+    <div class="post-content markdown-body">
+        <h2 id="introduction">Introduction</h2>
+<p>Vous avez installé NetBSD sur votre grille-pain, mais vous ne savez pas quoi en faire ? Ne cherchez plus! Grâce à cet article, vous pourrez héberger votre site web sur votre merveilleux appareil à fabriquer des toasts.</p>
+<p>Cet article va traiter de l&rsquo;installation du gestionnaire de paquets <a href="https://pkgin.net" target="_blank">pkgin</a>, de <a href="https://www.nginx.com" target="_blank">nginx</a> et de <a href="https://www.php.net" target="_blank">php</a>, ainsi de la configuration de ces derniers.</p>
+<h2 id="installation-de-pkgin">Installation de pkgin</h2>
+<p>Si vous avez déjà pkgin installé sur votre NetBSD, vous pouvez passer à la <a href="#php-fpm">section suivante</a>.</p>
+<p>pkgin est un gestionnaire de paquets pour NetBSD, à la manière de apt-get si vous avez déjà touché à Debian ou Ubuntu, pacman pour Archlinux, yum pour Fedora et CentOS, etc.</p>
+<p>Pour l&rsquo;installer, on va utiliser sa version précompilée fournie par NetBSD. La commande <code>pkg_add</code>, de l&rsquo;outil <a href="https://www.netbsd.org/docs/pkgsrc/" target="_blank">pkgsrc</a> permet d&rsquo;installer un paquet à partir d&rsquo;une URL. On peut définir la variable d&rsquo;environnement <code>PKG_PATH</code> afin de dire à <code>pkg_add</code> où trouver les paquets</p>
+<pre><code class="language-shell">export PKG_PATH=&quot;http://ftp.netbsd.org/pub/pkgsrc/packages/NetBSD/$(uname -p)/$(uname -r)/All&quot;
+</code></pre>
+<p>Et maintenant, on va installer pkgin</p>
+<pre><code class="language-shell">pkg_add pkgin
+</code></pre>
+<p>On peut éventuellement éditer la configuration de pkgin</p>
+<pre><code class="language-shell">vi /usr/pkg/etc/pkgin/repositories.conf
+</code></pre>
+<p>Je change la variable <code>$arch</code> vers <code>aarch64</code> dans mon cas, car mon grille-pain se trouve être un Raspberry Pi 3, sinon renseigner votre architecture (<code>uname -p</code>)</p>
+<pre><code class="language-ini">https://cdn.netbsd.org/pub/pkgsrc/packages/NetBSD/aarch64/9.0/All
+</code></pre>
+<p>Maintenant on met à jour la liste des paquets</p>
+<pre><code class="language-shell">pkgin update
+</code></pre>
+<p>Ça y est, vous avez un gestionnaire de paquets tout beau, tout neuf ! Passons maintenant au vif du sujet.</p>
+<h2 id="php-fpm">PHP-FPM</h2>
+<p>PHP-FPM (FastCGI Process Manager) est une API permettant de connecter un serveur web (Nginx dans notre cas) et PHP, via l&rsquo;utilisation d&rsquo;un socket.</p>
+<h3 id="installation-de-php-fpm">Installation de PHP-FPM</h3>
+<p>Pour l&rsquo;installer, rien de plus simple</p>
+<pre><code class="language-shell">pkgin in php74-fpm
+</code></pre>
+<p>Vous remarquerez le <em>74</em> dans <em>php74-fpm</em>; il s&rsquo;agit en fait de la version 7.4 de PHP. Vous pouvez faire un <code>pkgin search php</code> pour chercher une version plus récente de <em>php-fpm</em>, PHP 7.4 étant la dernière en date au moment de la rédaction.</p>
+<h3 id="configuration-de-php-fpm">Configuration de PHP-FPM</h3>
+<p>On remarquera que le gentil monsieur nous dit quoi faire, en effet dans le terminal on peut lire</p>
+<pre><code class="language-console">The following files should be created for php74-fpm-7.4.10nb4:
+
+        /etc/rc.d/php_fpm (m=0755)
+            [/usr/pkg/share/examples/rc.d/php_fpm]
+</code></pre>
+<p>Alors on peut simplement copier le fichier <code>php_fpm</code> dans <code>/etc/rc.d/</code>, étant le fichier d&rsquo;initialisation du serveur (celui qui permet le démarrage, l&rsquo;arrêt, le redémarage, &hellip; de php-fpm)</p>
+<pre><code class="language-shell">cp /usr/pkg/share/examples/rc.d/php_fpm /etc/rc.d/php_fpm
+</code></pre>
+<p>Le <a href="https://www.netbsd.org/docs/guide/en/chap-rc.html" target="_blank">système rc.d</a> permet d&rsquo;exécuter des programmes automatiquement au démarrage du système. On peut donc ajouter la règle d&rsquo;initialisation de php-fpm dans <code>/etc/rc.conf</code>. À la fin du fichier, ajouter</p>
+<pre><code class="language-ini">php_fpm=YES
+</code></pre>
+<p>Maintenant il ne nous reste plus qu&rsquo;à démarer le service</p>
+<pre><code class="language-shell">service php_fpm start
+</code></pre>
+<p>Si vous obtenez le message <em>Starting php_fpm.</em>, c&rsquo;est parfait !</p>
+<p>C&rsquo;est tout pour PHP. Maintenant passons à Nginx.</p>
+<h2 id="nginx">NGINX</h2>
+<p>Nginx (à prononcer engine-x) est un serveur HTTP assez léger écrit en C++, qui conviendra parfaitement à nos besoins de légerté concernant l&rsquo;hébergement web chez le pain de mie (le grille-pain, vous vous souvenez ?)</p>
+<h3 id="installation-de-nginx">Installation de Nginx</h3>
+<p>Pour installer Nginx et toutes ses dépendances</p>
+<pre><code class="language-shell">pkgin in nginx
+</code></pre>
+<h3 id="configuration-de-nginx">Configuration de Nginx</h3>
+<p>Comme avant, l&rsquo;installeur nous donne quelques tâches à faire pour finaliser l&rsquo;installation</p>
+<pre><code class="language-console">The following files should be created for nginx-1.19.2:
+
+        /etc/rc.d/nginx (m=0755)
+            [/usr/pkg/share/examples/rc.d/nginx]
+</code></pre>
+<p>On va donc copier le fichier d&rsquo;initialisation de nginx</p>
+<pre><code class="language-shell">cp /usr/pkg/share/examples/rc.d/nginx /etc/rc.d/nginx
+</code></pre>
+<p>Puis éditer <code>/etc/rc.conf</code> pour y ajouter à la fin</p>
+<pre><code class="language-ini">nginx=YES
+</code></pre>
+<p>On peut à présent démarer Nginx</p>
+<pre><code class="language-shell">service nginx start
+</code></pre>
+<p>Si tout se passe bien, vous obenez le message <em>Starting nginx.</em></p>
+<h3 id="hello-world">Hello, World</h3>
+<p>Ca y est ! Vous pouvez dès à présent accéder à votre grille-pain du futur depuis votre smartphone via le navigateur. Vous allez obtenir la page par défaut de Nginx</p>
+<p><img class="img-zoomable" src="/img/Nginx_welcome.png" alt="Nginx welcome" />
+</p>
+<p>C&rsquo;est déjà bien, mais avec ça vous ne pouvez toujours pas exécuter de PHP côté serveur. Il va falloir approfondir les configurations.</p>
+<h3 id="configuration-avancée-de-nginx">Configuration avancée de Nginx</h3>
+<p>On va éditer la configuration de Nginx qui se trouve dans <code>/usr/pkg/etc/nginx/nginx.conf</code>. Modifier le champs <em>server</em> pour obtenir un résultat similaire</p>
+<pre><code class="language-nginx">server {
+    listen       80;
+    server_name  localhost;
+    root         /var/www; # Racine des documents; vous pouvez la modifier si besoin
+    #charset koi8-r;
+
+    #access_log  /var/log/nginx/host.access.log  main;
+
+    location / {
+        index index.html index.htm index.php;
+        try_files $uri $uri/ /index.html;
+    }
+
+    #error_page  404              /404.html;
+
+    # redirect server error pages to the static page /50x.html
+    #
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   share/examples/nginx/html;
+    }
+
+    # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+    #
+    location ~ \.php$ {
+        try_files $uri =404;
+        fastcgi_pass   127.0.0.1:9000;
+        fastcgi_index  index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include        /usr/pkg/etc/nginx/fastcgi_params;
+    }
+}
+</code></pre>
+<p>Il est aussi nécessaire de modifier l&rsquo;utilisateur et le groupe dans la configuration de php-fpm <code>/usr/pkg/etc/php-fpm.d/www.conf</code></p>
+<pre><code class="language-ini">user = nginx
+group = nginx
+</code></pre>
+<p>Maintenant on peut redémarer les services</p>
+<pre><code class="language-shell">service php_fpm restart
+service nginx restart
+</code></pre>
+<p>On peut maintenant créer un fichier à la racine de notre serveur web <code>/var/www/index.php</code> (ou votre racine si vous en avez choisi une autre)</p>
+<pre><code class="language-php">&lt;?php
+phpinfo();
+?&gt;
+</code></pre>
+<p>Et voilà ! Vous devriez tomber sur la page d&rsquo;information PHP en essayant d&rsquo;accéder à votre machine via un navigateur.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>Maintenant que vous avez un seveur web Nginx + PHP, vous pouvez héberger toutes sortes de contenus. Cependant beaucoup d&rsquo;applications PHP requiert des bibliothèques supplémentaires pour fonctionner.</p>
+<p>Par exemple, la bibliothèque <a href="https://www.php.net/manual/en/book.intl.php" target="_blank">php-intl</a> qui permet d&rsquo;étendre la prise en charge des caractères <a href="https://en.wikipedia.org/wiki/Unicode" target="_blank">Unicode</a>, peut s&rsquo;installer sur PHP 7.4 de cette manière</p>
+<pre><code class="language-shell">pkgin in php74-intl
+</code></pre>
+<p>Et il reste à redémarer le serveur PHP-FPM pour prendre en compte les changements</p>
+<pre><code class="language-shell">service php_fpm restart
+</code></pre>
+<p>De prochains articles sur l&rsquo;installations d&rsquo;applications web comme <a href="https://nextcloud.com" target="_blank">Nextcloud</a> ou <a href="https://www.passbolt.com" target="_blank">Passbolt</a> permettront d&rsquo;approfondir les détails de configuration de ces services.</p>
+
+    </div>
+</article>
+
+
+
+
+            </div>
+            <aside class="col-12 col-md-3 float-left sidebar">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/shinoyasx" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+            <li>
+                <a href="https://twitter.com/hugo140999" target="_blank"><span>Twitter</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/sysadmin/">SysAdmin</a>
+            </span>
+            
+            <span>
+                <a href="/tags/web/">web</a>
+            </span>
+            
+        </div>
+    </div>
+    
+    
+    
+    <div class="sidebar-item sidebar-toc">
+        <h3>TOC</h3>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#installation-de-pkgin">Installation de pkgin</a></li>
+    <li><a href="#php-fpm">PHP-FPM</a>
+      <ul>
+        <li><a href="#installation-de-php-fpm">Installation de PHP-FPM</a></li>
+        <li><a href="#configuration-de-php-fpm">Configuration de PHP-FPM</a></li>
+      </ul>
+    </li>
+    <li><a href="#nginx">NGINX</a>
+      <ul>
+        <li><a href="#installation-de-nginx">Installation de Nginx</a></li>
+        <li><a href="#configuration-de-nginx">Configuration de Nginx</a></li>
+        <li><a href="#hello-world">Hello, World</a></li>
+        <li><a href="#configuration-avancée-de-nginx">Configuration avancée de Nginx</a></li>
+      </ul>
+    </li>
+    <li><a href="#conclusion">Conclusion</a></li>
+  </ul>
+</nav>
+    </div>
+    
+    
+</aside>
+        </div>
+        <div class="btn">
+    <div class="btn-menu" id="btn-menu">
+        <i class="iconfont icon-grid-sharp"></i>
+    </div>
+    <div class="btn-toggle-mode">
+        <i class="iconfont icon-contrast-sharp"></i>
+    </div>
+    <div class="btn-scroll-top">
+        <i class="iconfont icon-chevron-up-circle-sharp"></i>
+    </div>
+</div>
+<aside class="sidebar-mobile" style="display: none;">
+  <div class="sidebar-wrapper">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/shinoyasx" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+            <li>
+                <a href="https://twitter.com/hugo140999" target="_blank"><span>Twitter</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/sysadmin/">SysAdmin</a>
+            </span>
+            
+            <span>
+                <a href="/tags/web/">web</a>
+            </span>
+            
+        </div>
+    </div>
+    
+    
+    
+    <div class="sidebar-item sidebar-toc">
+        <h3>TOC</h3>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#installation-de-pkgin">Installation de pkgin</a></li>
+    <li><a href="#php-fpm">PHP-FPM</a>
+      <ul>
+        <li><a href="#installation-de-php-fpm">Installation de PHP-FPM</a></li>
+        <li><a href="#configuration-de-php-fpm">Configuration de PHP-FPM</a></li>
+      </ul>
+    </li>
+    <li><a href="#nginx">NGINX</a>
+      <ul>
+        <li><a href="#installation-de-nginx">Installation de Nginx</a></li>
+        <li><a href="#configuration-de-nginx">Configuration de Nginx</a></li>
+        <li><a href="#hello-world">Hello, World</a></li>
+        <li><a href="#configuration-avancée-de-nginx">Configuration avancée de Nginx</a></li>
+      </ul>
+    </li>
+    <li><a href="#conclusion">Conclusion</a></li>
+  </ul>
+</nav>
+    </div>
+    
+    
+  </div>
+</aside>
+    </main>
+
+    <footer>
+    <div class="container-lg clearfix">
+        <div class="col-12 footer">
+            <span>&copy; 2020 <a href="https://shinoyasx.github.io/"></a> |
+                Powered by <a href="https://github.com/amzrk2/hugo-theme-fuji/"
+                   target="_blank">Fuji-v2</a> & <a href="https://gohugo.io/"
+                   target="_blank">Hugo</a> </span>
+        </div>
+    </div>
+</footer>
+    
+<script defer src="https://cdn.jsdelivr.net/combine/npm/medium-zoom@1.0.6,npm/lazysizes@5.2.2"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.21.0/components/prism-core.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.21.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+
+
+<script defer src="/assets/js/fuji.min.js"></script>
+
+
+</body>
+
+</html>

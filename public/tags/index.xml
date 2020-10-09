@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tags on Hugo Haldi (ShinoYasx)&#39;s blog</title>
+    <link>https://shinoyasx.github.io/tags/</link>
+    <description>Recent content in Tags on Hugo Haldi (ShinoYasx)&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>fr-fr</language>
+    <lastBuildDate>Fri, 09 Oct 2020 02:47:02 +0200</lastBuildDate><atom:link href="https://shinoyasx.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>SysAdmin</title>
+      <link>https://shinoyasx.github.io/tags/sysadmin/</link>
+      <pubDate>Fri, 09 Oct 2020 02:47:02 +0200</pubDate>
+      
+      <guid>https://shinoyasx.github.io/tags/sysadmin/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>web</title>
+      <link>https://shinoyasx.github.io/tags/web/</link>
+      <pubDate>Fri, 09 Oct 2020 02:47:02 +0200</pubDate>
+      
+      <guid>https://shinoyasx.github.io/tags/web/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>
