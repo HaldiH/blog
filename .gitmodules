@@ -1,7 +1,6 @@
 [submodule "public"]
 	path = public
-	url = https://github.com/ShinoYasx/shinoyasx.github.io.git
-	branch = master
-[submodule "themes/fuji"]
-	path = themes/fuji
+	url = git@github.com:ShinoYasx/shinoyasx.github.io.git
+[submodule "theme/fuji"]
+	path = theme/fuji
 	url = https://github.com/amzrk2/hugo-theme-fuji.git
