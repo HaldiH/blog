@@ -2,5 +2,5 @@
 	path = public
 	url = git@github.com:ShinoYasx/shinoyasx.github.io.git
 [submodule "theme/fuji"]
-	path = theme/fuji
+	path = themes/fuji
 	url = https://github.com/amzrk2/hugo-theme-fuji.git
