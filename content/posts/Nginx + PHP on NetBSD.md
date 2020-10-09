@@ -143,7 +143,7 @@ Si tout se passe bien, vous obenez le message *Starting nginx.*
 
 Ca y est ! Vous pouvez dès à présent accéder à votre grille-pain du futur depuis votre smartphone via le navigateur. Vous allez obtenir la page par défaut de Nginx
 
-![Nginx welcome](images/Nginx_welcome.png)
+![Nginx welcome](/static/Nginx_welcome.png)
 
 C'est déjà bien, mais avec ça vous ne pouvez toujours pas exécuter de PHP coté serveur. Il va falloir approfondir les configurations.
 
