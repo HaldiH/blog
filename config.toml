@@ -1,4 +1,64 @@
-baseURL = "https://shinoyasx.github.io/"
-languageCode = "fr-fr"
-title = "Hugo (ShinoYasx)'s blog"
-theme = "fuji"
+baseURL = 'https://shinoyasx.github.io/'
+languageCode = 'fr-fr'
+theme = 'fuji'
+title = '''Hugo Haldi (ShinoYasx)'s blog'''
+
+[permalinks]
+post = '/:section/:filename/'
+
+[params]
+AuthorName = 'Hugo Haldi'
+GitHubUser = 'shinoyasx'
+ListOfFoo = [
+    'foo1',
+    'foo2',
+]
+SidebarRecentLimit = 5
+Subtitle = 'DevOps, SysAdmin, GNU, Linux, Unix, etc.'
+showReadTime = true
+showWordCounter = true
+showLicense = false
+showToc = true
+license = 'CC BY-NC-SA 4.0'
+licenseLink = 'http://creativecommons.org/licenses/by-nc-sa/4.0/'
+[markup.goldmark.renderer]
+unsafe = true
+
+[markup.highlight]
+codeFences = false
+
+[markup.tableOfContents]
+endLevel = 3
+startLevel = 2
+
+[taxonomies]
+tag = 'tags'
+[[menu.nav]]
+name = 'Home'
+url = '/'
+weight = 1
+
+[[menu.nav]]
+name = 'Archives'
+url = '/archives/'
+weight = 2
+
+[[menu.nav]]
+name = 'Search'
+url = '/search/'
+weight = 4
+
+[[menu.nav]]
+name = 'RSS'
+url = '/index.xml'
+weight = 5
+
+[[menu.link]]
+name = 'GitHub'
+url = 'https://github.com/shinoyasx'
+weight = 1
+
+[[menu.link]]
+name = 'Twitter'
+url = 'https://twitter.com/hugo140999'
+weight = 2

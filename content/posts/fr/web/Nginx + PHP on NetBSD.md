@@ -1,8 +1,11 @@
 ---
-title: "Installation de Nginx et PHP sur NetBSD"
+title: Nginx + PHP sur NetBSD
 date: 2020-10-09T02:47:02+02:00
+description: Installation de Nginx et PHP sur NetBSD
 draft: false
-tags: 
+authors: [Hugo Haldi]
+weight: 01
+tags: ["SysAdmin", "web"]
 ---
 
 ## Introduction
@@ -145,7 +148,7 @@ Ca y est ! Vous pouvez dès à présent accéder à votre grille-pain du futur d
 
 ![Nginx welcome](/img/Nginx_welcome.png)
 
-C'est déjà bien, mais avec ça vous ne pouvez toujours pas exécuter de PHP coté serveur. Il va falloir approfondir les configurations.
+C'est déjà bien, mais avec ça vous ne pouvez toujours pas exécuter de PHP côté serveur. Il va falloir approfondir les configurations.
 
 ### Configuration avancée de Nginx
 
