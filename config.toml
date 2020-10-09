@@ -1,4 +1,4 @@
 baseURL = "https://shinoyasx.github.io/"
-languageCode = "en-us"
+languageCode = "fr-fr"
 title = "Hugo (ShinoYasx)'s blog"
 theme = "fuji"

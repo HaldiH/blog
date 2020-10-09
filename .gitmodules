@@ -2,3 +2,6 @@
 	path = public
 	url = https://github.com/ShinoYasx/shinoyasx.github.io.git
 	branch = master
+[submodule "themes/fuji"]
+	path = themes/fuji
+	url = https://github.com/amzrk2/hugo-theme-fuji.git

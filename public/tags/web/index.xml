@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>web on Hugo Haldi (ShinoYasx)&#39;s blog</title>
+    <link>https://shinoyasx.github.io/tags/web/</link>
+    <description>Recent content in web on Hugo Haldi (ShinoYasx)&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>fr-fr</language>
+    <lastBuildDate>Fri, 09 Oct 2020 02:47:02 +0200</lastBuildDate><atom:link href="https://shinoyasx.github.io/tags/web/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Nginx &#43; PHP sur NetBSD</title>
+      <link>https://shinoyasx.github.io/posts/fr/web/nginx-&#43;-php-on-netbsd/</link>
+      <pubDate>Fri, 09 Oct 2020 02:47:02 +0200</pubDate>
+      
+      <guid>https://shinoyasx.github.io/posts/fr/web/nginx-&#43;-php-on-netbsd/</guid>
+      <description>Introduction Vous avez installé NetBSD sur votre grille-pain, mais vous ne savez pas quoi en faire ? Ne cherchez plus! Grâce à cet article, vous pourrez héberger votre site web sur votre merveilleux appareil à fabriquer des toasts.
+Cet article va traiter de l&amp;rsquo;installation du gestionnaire de paquets pkgin, de nginx et de php, ainsi de la configuration de ces derniers.
+Installation de pkgin Si vous avez déjà pkgin installé sur votre NetBSD, vous pouvez passer à la section suivante.</description>
+    </item>
+    
+  </channel>
+</rss>
