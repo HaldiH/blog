@@ -1,18 +1,14 @@
 baseURL = 'https://shinoyasx.github.io/'
 languageCode = 'fr-fr'
 theme = 'fuji'
-title = '''Hugo Haldi (ShinoYasx)'s blog'''
+title = '''Hugo Haldi's blog'''
 
 [permalinks]
 post = '/:section/:filename/'
 
 [params]
 AuthorName = 'Hugo Haldi'
-GitHubUser = 'shinoyasx'
-ListOfFoo = [
-    'foo1',
-    'foo2',
-]
+GitHubUser = 'HaldiH'
 SidebarRecentLimit = 5
 Subtitle = 'DevOps, SysAdmin, GNU, Linux, Unix, etc.'
 showReadTime = true
@@ -55,7 +51,7 @@ weight = 5
 
 [[menu.link]]
 name = 'GitHub'
-url = 'https://github.com/shinoyasx'
+url = 'https://github.com/HaldiH'
 weight = 1
 
 [[menu.link]]
